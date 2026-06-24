@@ -14,6 +14,28 @@
   <main>
     <div id="grid"></div>
   </main>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-box">
+      <div id="modal-img"></div>
+      <div class="modal-body">
+        <h2 id="modal-title"></h2>
+        <div class="modal-price" id="modal-price"></div>
+        <div class="modal-condition" id="modal-condition"></div>
+        <p class="modal-description" id="modal-description"></p>
+
+        <div id="modal-contact">
+          <div class="contact-label">気になったらSlackで <strong>Shota</strong> を検索してDMしてください</div>
+          <textarea id="modal-message" readonly rows="2"></textarea>
+          <button id="copy-btn">メッセージをコピー</button>
+        </div>
+
+        <button id="close-btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
