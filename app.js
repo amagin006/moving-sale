@@ -19,14 +19,14 @@ function cardHtml(item, index) {
   const imgUrl = driveImageUrl(item['写真URL']);
   const sold = isSold(item);
   return `
-    <div class="card${sold ? ' sold' : ''}" data-index="${index}" role="button" tabindex="0">
+    <div class="card${sold ? ' sold' : ''}" ${!sold ? `data-index="${index}" role="button" tabindex="0"` : ''}>
       ${imgUrl
         ? `<img src="${imgUrl}" alt="${item['品名'] || ''}" loading="lazy">`
         : '<div class="no-image">📷</div>'}
       ${sold ? '<span class="sold-badge">SOLD</span>' : ''}
       <div class="card-body">
         <h3>${item['品名'] || '(名前なし)'}</h3>
-        <div class="price">${priceLabel(item['値段'])}</div>
+        ${!sold ? `<div class="price">${priceLabel(item['値段'])}</div>` : ''}
         ${item['状態'] ? `<div class="condition">${item['状態']}</div>` : ''}
         ${item['説明'] ? `<p class="description">${item['説明']}</p>` : ''}
         ${item['カテゴリ'] ? `<span class="tag">${item['カテゴリ']}</span>` : ''}

@@ -195,7 +195,8 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
 }
 #close-btn:hover { background: #f4f4f4; }
 
-.card { cursor: pointer; }
+.card[role="button"] { cursor: pointer; }
+.card.sold { cursor: default; }
 
 @media (max-width: 480px) {
   #grid { padding: 1rem; gap: 1rem; }
