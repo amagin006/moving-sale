@@ -33,7 +33,7 @@ function cardHtml(item) {
 async function loadItems() {
   const res = await fetch(SHEET_URL);
   const text = await res.text();
-  const json = JSON.parse(text.slice(47, -2));
+  const json = JSON.parse(text.substring(text.indexOf('(') + 1, text.lastIndexOf(')')));
   const labels = json.table.cols.map(c => c.label);
   return json.table.rows
     .filter(row => row.c.some(c => c && c.v !== null && c.v !== ''))
