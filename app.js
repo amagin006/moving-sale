@@ -8,7 +8,7 @@ function driveImageUrl(url) {
 
 function priceLabel(val) {
   if (!val && val !== 0) return '要相談';
-  return `$${Number(val).toLocaleString()} CAD`;
+  return `$${Number(val).toLocaleString()}`;
 }
 
 function cardHtml(item) {
