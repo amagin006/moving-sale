@@ -176,7 +176,8 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
 #modal-img img, .modal-no-image {
   width: 100%;
   height: 260px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #eee;
 }
 .modal-no-image {
   display: flex;
