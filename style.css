@@ -61,6 +61,16 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   letter-spacing: .05em;
 }
 
+.photo-count-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: rgba(0,0,0,.55);
+  color: white;
+  font-size: .75rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
 .card-body { padding: 1rem; }
 .card-body h3 { font-size: 1rem; margin-bottom: .4rem; }
 

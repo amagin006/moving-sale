@@ -30,14 +30,16 @@ function isSold(item) {
 }
 
 function cardHtml(item, index) {
-  const imgUrl = driveImageUrl(item['写真URL']);
+  const photos = item.photos || [];
   const sold = isSold(item);
+  const badgeLabel = ImageUtils.photoBadgeLabel(photos.length);
   return `
     <div class="card${sold ? ' sold' : ''}" ${!sold ? `data-index="${index}" role="button" tabindex="0"` : ''}>
-      ${imgUrl
-        ? `<img src="${imgUrl}" alt="${item['品名'] || ''}" loading="lazy">`
+      ${photos[0]
+        ? `<img src="${photos[0]}" alt="${item['品名'] || ''}" loading="lazy">`
         : '<div class="no-image">📷</div>'}
       ${sold ? '<span class="sold-badge">SOLD</span>' : ''}
+      ${badgeLabel ? `<span class="photo-count-badge">${badgeLabel}</span>` : ''}
       <div class="card-body">
         <h3>${item['品名'] || '(名前なし)'}</h3>
         ${!sold ? `<div class="price">${priceLabel(item['値段'])}</div>` : ''}
