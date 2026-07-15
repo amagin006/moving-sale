@@ -1,7 +1,11 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
   background: #f4f4f4;
   color: #333;
 }
@@ -12,8 +16,14 @@ header {
   padding: 2rem 1rem;
   text-align: center;
 }
-header h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
-header p  { opacity: 0.75; font-size: 0.95rem; }
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+header p {
+  opacity: 0.75;
+  font-size: 0.95rem;
+}
 
 #grid {
   display: grid;
@@ -28,14 +38,19 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
-  transition: transform .15s;
+  transition: transform 0.15s;
 }
-.card:hover { transform: translateY(-3px); }
-.card.sold  { opacity: .45; }
+.card:hover {
+  transform: translateY(-3px);
+}
+.card.sold {
+  opacity: 0.45;
+}
 
-.card img, .no-image {
+.card img,
+.no-image {
   width: 100%;
   height: 210px;
   object-fit: cover;
@@ -51,54 +66,61 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
 
 .sold-badge {
   position: absolute;
-  top: 10px; right: 10px;
+  top: 10px;
+  right: 10px;
   background: #e74c3c;
   color: white;
   font-weight: bold;
-  font-size: .8rem;
+  font-size: 0.8rem;
   padding: 3px 10px;
   border-radius: 4px;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
 }
 
 .photo-count-badge {
   position: absolute;
-  top: 10px; left: 10px;
-  background: rgba(0,0,0,.55);
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.55);
   color: white;
-  font-size: .75rem;
+  font-size: 0.75rem;
   padding: 3px 8px;
   border-radius: 20px;
 }
 
-.card-body { padding: 1rem; }
-.card-body h3 { font-size: 1rem; margin-bottom: .4rem; }
+.card-body {
+  padding: 1rem;
+}
+.card-body h3 {
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
 
 .price {
   font-size: 1.35rem;
   font-weight: bold;
   color: #e67e22;
-  margin-bottom: .25rem;
+  margin-bottom: 0.25rem;
 }
 
 .condition {
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: #888;
-  margin-bottom: .4rem;
+  margin-bottom: 0.4rem;
 }
 
 .description {
-  font-size: .88rem;
+  font-size: 0.88rem;
   color: #555;
   line-height: 1.55;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .tag {
   display: inline-block;
   background: #ecf0f1;
   color: #666;
-  font-size: .75rem;
+  font-size: 0.75rem;
   padding: 2px 9px;
   border-radius: 20px;
 }
@@ -116,13 +138,15 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.55);
+  background: rgba(0, 0, 0, 0.55);
   z-index: 100;
   align-items: center;
   justify-content: center;
   padding: 1rem;
 }
-#modal.open { display: flex; }
+#modal.open {
+  display: flex;
+}
 
 .modal-box {
   background: white;
@@ -134,7 +158,9 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   overflow-y: auto;
 }
 
-.modal-media { position: relative; }
+.modal-media {
+  position: relative;
+}
 
 .carousel-btn {
   position: absolute;
@@ -144,7 +170,7 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(0,0,0,.45);
+  background: rgba(0, 0, 0, 0.45);
   color: white;
   font-size: 1.4rem;
   line-height: 1;
@@ -153,8 +179,12 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   align-items: center;
   justify-content: center;
 }
-.carousel-btn-prev { left: 10px; }
-.carousel-btn-next { right: 10px; }
+.carousel-btn-prev {
+  left: 10px;
+}
+.carousel-btn-next {
+  right: 10px;
+}
 
 .carousel-dots {
   position: absolute;
@@ -168,14 +198,17 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,.6);
+  background: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }
-.carousel-dots .dot.active { background: white; }
+.carousel-dots .dot.active {
+  background: white;
+}
 
-#modal-img img, .modal-no-image {
+#modal-img img,
+.modal-no-image {
   width: 100%;
-  height: 260px;
+  height: 100%;
   object-fit: contain;
   background: #eee;
 }
@@ -188,17 +221,31 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   color: #bbb;
 }
 
-.modal-body { padding: 1.25rem; }
-.modal-body h2 { font-size: 1.2rem; margin-bottom: .4rem; }
+.modal-body {
+  padding: 1.25rem;
+}
+.modal-body h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
 
 .modal-price {
   font-size: 1.5rem;
   font-weight: bold;
   color: #e67e22;
-  margin-bottom: .25rem;
+  margin-bottom: 0.25rem;
 }
-.modal-condition { font-size: .85rem; color: #888; margin-bottom: .5rem; }
-.modal-description { font-size: .9rem; color: #555; line-height: 1.6; margin-bottom: 1rem; }
+.modal-condition {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+.modal-description {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
 
 #modal-contact {
   background: #f8f9fa;
@@ -206,17 +253,22 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   padding: 1rem;
   margin-bottom: 1rem;
 }
-.contact-label { font-size: .88rem; color: #444; margin-bottom: .6rem; line-height: 1.5; }
+.contact-label {
+  font-size: 0.88rem;
+  color: #444;
+  margin-bottom: 0.6rem;
+  line-height: 1.5;
+}
 
 #modal-message {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 6px;
-  padding: .5rem .7rem;
-  font-size: .9rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
   resize: none;
   background: white;
-  margin-bottom: .6rem;
+  margin-bottom: 0.6rem;
   line-height: 1.5;
 }
 
@@ -226,30 +278,47 @@ header p  { opacity: 0.75; font-size: 0.95rem; }
   color: white;
   border: none;
   border-radius: 8px;
-  padding: .7rem;
-  font-size: .95rem;
+  padding: 0.7rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: background .15s;
+  transition: background 0.15s;
 }
-#copy-btn:hover { background: #3d5166; }
+#copy-btn:hover {
+  background: #3d5166;
+}
 
 #close-btn {
   width: 100%;
   background: none;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: .6rem;
-  font-size: .9rem;
+  padding: 0.6rem;
+  font-size: 0.9rem;
   color: #888;
   cursor: pointer;
 }
-#close-btn:hover { background: #f4f4f4; }
+#close-btn:hover {
+  background: #f4f4f4;
+}
 
-.card[role="button"] { cursor: pointer; }
-.card.sold { cursor: default; }
+.card[role="button"] {
+  cursor: pointer;
+}
+.card.sold {
+  cursor: default;
+}
 
 @media (max-width: 480px) {
-  #grid { padding: 1rem; gap: 1rem; }
-  .card img, .no-image { height: 180px; }
-  #modal-img img, .modal-no-image { height: 200px; }
+  #grid {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .card img,
+  .no-image {
+    height: 180px;
+  }
+  #modal-img img,
+  .modal-no-image {
+    height: 200px;
+  }
 }
