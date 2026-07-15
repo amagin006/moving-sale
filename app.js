@@ -1,9 +1,23 @@
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json`;
 
-function driveImageUrl(url) {
-  if (!url) return null;
-  const match = url.match(/\/d\/([^/?]+)/);
-  return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500` : url;
+function probeImage(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+async function loadItemImages(id) {
+  const photos = [];
+  for (let n = 1; n <= 8; n++) {
+    const url = ImageUtils.imageCandidateUrl(id, n);
+    const ok = await probeImage(url);
+    if (!ok) break;
+    photos.push(url);
+  }
+  return photos;
 }
 
 function priceLabel(val) {
@@ -90,8 +104,12 @@ async function main() {
   const grid = document.getElementById('grid');
   try {
     const items = await loadItems();
-    const available = items.filter(i => !isSold(i));
-    const sold = items.filter(i => isSold(i));
+    const withPhotos = await Promise.all(items.map(async item => {
+      item.photos = await loadItemImages(item['商品ID']);
+      return item;
+    }));
+    const available = withPhotos.filter(i => !isSold(i));
+    const sold = withPhotos.filter(i => isSold(i));
     const ordered = [...available, ...sold];
     grid.innerHTML = ordered.map((item, i) => cardHtml(item, i)).join('');
 
