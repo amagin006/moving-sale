@@ -50,15 +50,45 @@ function cardHtml(item, index) {
     </div>`;
 }
 
+let modalPhotos = [];
+let modalPhotoIndex = 0;
+
+function renderCarouselPhoto() {
+  const imgWrap = document.getElementById('modal-img');
+  const url = modalPhotos[modalPhotoIndex];
+  imgWrap.innerHTML = url
+    ? `<img src="${url}" alt="">`
+    : '<div class="modal-no-image">📷</div>';
+
+  const hasMultiple = modalPhotos.length > 1;
+  document.getElementById('prev-photo-btn').style.display = hasMultiple ? 'flex' : 'none';
+  document.getElementById('next-photo-btn').style.display = hasMultiple ? 'flex' : 'none';
+
+  const dotsWrap = document.getElementById('carousel-dots');
+  dotsWrap.innerHTML = hasMultiple
+    ? modalPhotos.map((_, i) => `<span class="dot${i === modalPhotoIndex ? ' active' : ''}" data-index="${i}"></span>`).join('')
+    : '';
+}
+
+function showPhoto(delta) {
+  modalPhotoIndex = ImageUtils.clampedStep(modalPhotoIndex, delta, modalPhotos.length);
+  renderCarouselPhoto();
+}
+
+function goToPhoto(index) {
+  modalPhotoIndex = ImageUtils.clampedStep(index, 0, modalPhotos.length);
+  renderCarouselPhoto();
+}
+
 function openModal(item) {
   const sold = isSold(item);
-  const imgUrl = driveImageUrl(item['写真URL']);
   const price = priceLabel(item['値段']);
   const message = `「${item['品名']}」(${price}) に興味があります！`;
 
-  document.getElementById('modal-img').innerHTML = imgUrl
-    ? `<img src="${imgUrl}" alt="${item['品名'] || ''}">`
-    : '<div class="modal-no-image">📷</div>';
+  modalPhotos = item.photos || [];
+  modalPhotoIndex = 0;
+  renderCarouselPhoto();
+
   document.getElementById('modal-title').textContent = item['品名'] || '(名前なし)';
   document.getElementById('modal-price').textContent = price;
   document.getElementById('modal-condition').textContent = item['状態'] || '';
@@ -135,6 +165,33 @@ async function main() {
   });
   document.getElementById('close-btn').addEventListener('click', closeModal);
   document.getElementById('copy-btn').addEventListener('click', copyMessage);
+
+  document.getElementById('prev-photo-btn').addEventListener('click', () => showPhoto(-1));
+  document.getElementById('next-photo-btn').addEventListener('click', () => showPhoto(1));
+  document.getElementById('carousel-dots').addEventListener('click', e => {
+    const dot = e.target.closest('.dot');
+    if (dot) goToPhoto(Number(dot.dataset.index));
+  });
+
+  let touchStartX = null;
+  const modalImg = document.getElementById('modal-img');
+  modalImg.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  modalImg.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const direction = ImageUtils.swipeDirection(deltaX);
+    if (direction === 'left') showPhoto(1);
+    if (direction === 'right') showPhoto(-1);
+    touchStartX = null;
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('modal').classList.contains('open')) return;
+    if (e.key === 'ArrowLeft') showPhoto(-1);
+    if (e.key === 'ArrowRight') showPhoto(1);
+  });
 }
 
 main();
