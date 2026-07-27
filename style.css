@@ -34,6 +34,34 @@ header p {
   margin: 0 auto;
 }
 
+#filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 0;
+}
+
+.filter-btn {
+  display: inline-block;
+  background: #ecf0f1;
+  color: #666;
+  font-size: 0.85rem;
+  padding: 5px 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.filter-btn:hover {
+  background: #dfe4e6;
+}
+.filter-btn.active {
+  background: #2c3e50;
+  color: white;
+}
+
 .card {
   background: white;
   border-radius: 12px;
@@ -309,6 +337,9 @@ header p {
 }
 
 @media (max-width: 480px) {
+  #filter-bar {
+    padding: 0.75rem 1rem 0;
+  }
   #grid {
     padding: 1rem;
     gap: 1rem;

@@ -50,8 +50,27 @@ function cardHtml(item, index) {
     </div>`;
 }
 
+function filterBarHtml(tagList, selected) {
+  const allBtn = `<button class="filter-btn${selected === 'all' ? ' active' : ''}" data-tag="all">すべて</button>`;
+  const tagBtns = tagList.map(tag =>
+    `<button class="filter-btn${selected === tag ? ' active' : ''}" data-tag="${tag}">${tag}</button>`
+  ).join('');
+  return allBtn + tagBtns;
+}
+
+function renderGrid() {
+  visibleItems = FilterUtils.filterItems(allOrdered, currentFilter);
+  document.getElementById('grid').innerHTML = visibleItems.map((item, i) => cardHtml(item, i)).join('');
+  document.getElementById('filter-bar').innerHTML = filterBarHtml(tags, currentFilter);
+}
+
 let modalPhotos = [];
 let modalPhotoIndex = 0;
+
+let allOrdered = [];
+let currentFilter = 'all';
+let tags = [];
+let visibleItems = [];
 
 function renderCarouselPhoto() {
   const imgWrap = document.getElementById('modal-img');
@@ -134,6 +153,7 @@ async function main() {
   document.querySelector('header p').textContent = CONFIG.SUBTITLE;
 
   const grid = document.getElementById('grid');
+  const filterBar = document.getElementById('filter-bar');
   try {
     const items = await loadItems();
     const withPhotos = await Promise.all(items.map(async item => {
@@ -142,18 +162,25 @@ async function main() {
     }));
     const available = withPhotos.filter(i => !isSold(i));
     const sold = withPhotos.filter(i => isSold(i));
-    const ordered = [...available, ...sold];
-    grid.innerHTML = ordered.map((item, i) => cardHtml(item, i)).join('');
+    allOrdered = [...available, ...sold];
+    tags = FilterUtils.collectTags(allOrdered);
+    renderGrid();
 
     grid.addEventListener('click', e => {
       const card = e.target.closest('.card');
-      if (card) openModal(ordered[card.dataset.index]);
+      if (card) openModal(visibleItems[card.dataset.index]);
     });
     grid.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         const card = e.target.closest('.card');
-        if (card) openModal(ordered[card.dataset.index]);
+        if (card) openModal(visibleItems[card.dataset.index]);
       }
+    });
+    filterBar.addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      currentFilter = btn.dataset.tag;
+      renderGrid();
     });
   } catch (e) {
     grid.innerHTML = '<p class="error">データを読み込めませんでした。<br>SHEET_ID と シートの公開設定を確認してください。</p>';
