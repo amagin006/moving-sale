@@ -379,8 +379,10 @@ function renderGrid() {
 
 - [ ] **Step 5: 既存テストが壊れていないことを確認**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS, 全テストがパス（`filter-utils.test.js`と`image-utils.test.js`両方）
+
+（`node --test tests/`のようにディレクトリを直接指定する形は、この環境のNode（v22.20.0）では`Cannot find module`エラーになる。引数なしの`node --test`か、`node --test tests/*.test.js`を使うこと。）
 
 - [ ] **Step 6: ブラウザで動作確認**
 
