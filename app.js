@@ -43,7 +43,7 @@ function cardHtml(item, index) {
   const sold = isSold(item);
   const badgeLabel = ImageUtils.photoBadgeLabel(photos.length);
   return `
-    <div class="card${sold ? ' sold' : ''}" ${!sold ? `data-index="${index}" role="button" tabindex="0"` : ''}>
+    <div class="card${sold ? ' sold' : ''}" data-photo-index="${index}" ${!sold ? `data-index="${index}" role="button" tabindex="0"` : ''}>
       ${photos[0]
         ? `<img src="${photos[0]}" alt="${item['品名'] || ''}" loading="lazy">`
         : '<div class="no-image">📷</div>'}
@@ -71,10 +71,12 @@ function renderGrid() {
   visibleItems = FilterUtils.filterItems(allOrdered, currentFilter);
   document.getElementById('grid').innerHTML = visibleItems.map((item, i) => cardHtml(item, i)).join('');
   document.getElementById('filter-bar').innerHTML = filterBarHtml(tags, currentFilter);
+  observeCardPhotos();
 }
 
 let modalPhotos = [];
 let modalPhotoIndex = 0;
+let currentModalItem = null;
 
 let allOrdered = [];
 let currentFilter = 'all';
@@ -113,9 +115,18 @@ function openModal(item) {
   const price = priceLabel(item['値段']);
   const message = `「${item['品名']}」(${price}) に興味があります！`;
 
+  currentModalItem = item;
   modalPhotos = item.photos || [];
   modalPhotoIndex = 0;
   renderCarouselPhoto();
+
+  if (modalPhotos.length === 0) {
+    loadItemPhotos(item).then(() => {
+      if (currentModalItem !== item || item.photos.length === 0) return;
+      modalPhotos = item.photos;
+      renderCarouselPhoto();
+    });
+  }
 
   document.getElementById('modal-title').textContent = item['品名'] || '(名前なし)';
   document.getElementById('modal-price').textContent = price;
@@ -164,14 +175,42 @@ async function loadItems() {
     });
 }
 
-async function loadAllPhotos(items) {
-  await Promise.all(items.map(async item => {
-    const photos = await loadItemImages(item['商品ID']);
-    if (photos.length > 0) {
-      item.photos = photos;
-      renderGrid();
+const loadingPhotoIds = new Set();
+let photoObserver = null;
+
+function getPhotoObserver() {
+  if (photoObserver) return photoObserver;
+  photoObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      photoObserver.unobserve(entry.target);
+      const item = visibleItems[entry.target.dataset.photoIndex];
+      loadItemPhotos(item);
+    });
+  }, { rootMargin: '200px' });
+  return photoObserver;
+}
+
+async function loadItemPhotos(item) {
+  if (!item || item.photos.length > 0) return;
+  const id = item['商品ID'];
+  if (loadingPhotoIds.has(id)) return;
+  loadingPhotoIds.add(id);
+  const photos = await loadItemImages(id);
+  if (photos.length > 0) {
+    item.photos = photos;
+    renderGrid();
+  }
+}
+
+function observeCardPhotos() {
+  const observer = getPhotoObserver();
+  document.querySelectorAll('#grid .card[data-photo-index]').forEach(card => {
+    const item = visibleItems[card.dataset.photoIndex];
+    if (item && item.photos.length === 0 && !loadingPhotoIds.has(item['商品ID'])) {
+      observer.observe(card);
     }
-  }));
+  });
 }
 
 async function main() {
@@ -188,8 +227,6 @@ async function main() {
     allOrdered = [...available, ...sold];
     tags = FilterUtils.collectTags(allOrdered);
     renderGrid();
-
-    loadAllPhotos(allOrdered);
 
     grid.addEventListener('click', e => {
       const card = e.target.closest('.card');
