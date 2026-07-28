@@ -1,10 +1,19 @@
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json`;
+const FETCH_TIMEOUT_MS = 10000;
+const IMAGE_PROBE_TIMEOUT_MS = 4000;
 
-function probeImage(url) {
+function probeImage(url, timeoutMs = IMAGE_PROBE_TIMEOUT_MS) {
   return new Promise(resolve => {
     const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
+    let settled = false;
+    const settle = ok => {
+      if (settled) return;
+      settled = true;
+      resolve(ok);
+    };
+    const timer = setTimeout(() => settle(false), timeoutMs);
+    img.onload = () => { clearTimeout(timer); settle(true); };
+    img.onerror = () => { clearTimeout(timer); settle(false); };
     img.src = url;
   });
 }
@@ -135,7 +144,14 @@ async function copyMessage() {
 }
 
 async function loadItems() {
-  const res = await fetch(SHEET_URL);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(SHEET_URL, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
   const text = await res.text();
   const json = JSON.parse(text.substring(text.indexOf('(') + 1, text.lastIndexOf(')')));
   const labels = json.table.cols.map(c => c.label);
@@ -148,6 +164,16 @@ async function loadItems() {
     });
 }
 
+async function loadAllPhotos(items) {
+  await Promise.all(items.map(async item => {
+    const photos = await loadItemImages(item['商品ID']);
+    if (photos.length > 0) {
+      item.photos = photos;
+      renderGrid();
+    }
+  }));
+}
+
 async function main() {
   document.querySelector('h1').textContent = CONFIG.TITLE;
   document.querySelector('header p').textContent = CONFIG.SUBTITLE;
@@ -156,15 +182,14 @@ async function main() {
   const filterBar = document.getElementById('filter-bar');
   try {
     const items = await loadItems();
-    const withPhotos = await Promise.all(items.map(async item => {
-      item.photos = await loadItemImages(item['商品ID']);
-      return item;
-    }));
-    const available = withPhotos.filter(i => !isSold(i));
-    const sold = withPhotos.filter(i => isSold(i));
+    items.forEach(item => { item.photos = []; });
+    const available = items.filter(i => !isSold(i));
+    const sold = items.filter(i => isSold(i));
     allOrdered = [...available, ...sold];
     tags = FilterUtils.collectTags(allOrdered);
     renderGrid();
+
+    loadAllPhotos(allOrdered);
 
     grid.addEventListener('click', e => {
       const card = e.target.closest('.card');
