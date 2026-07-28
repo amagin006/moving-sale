@@ -18,9 +18,9 @@ function probeImage(url, timeoutMs = IMAGE_PROBE_TIMEOUT_MS) {
   });
 }
 
-async function loadItemImages(id) {
+async function loadItemImages(id, maxCount = 8) {
   const photos = [];
-  for (let n = 1; n <= 8; n++) {
+  for (let n = 1; n <= maxCount; n++) {
     const url = ImageUtils.imageCandidateUrl(id, n);
     const ok = await probeImage(url);
     if (!ok) break;
@@ -196,7 +196,7 @@ async function loadItemPhotos(item) {
   const id = item['商品ID'];
   if (loadingPhotoIds.has(id)) return;
   loadingPhotoIds.add(id);
-  const photos = await loadItemImages(id);
+  const photos = await loadItemImages(id, isSold(item) ? 1 : 8);
   if (photos.length > 0) {
     item.photos = photos;
     renderGrid();
